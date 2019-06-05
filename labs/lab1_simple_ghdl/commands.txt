@@ -1,0 +1,5 @@
+ghdl -a simple_logic-e.vhd
+ghdl -a simple_logic-rtl-a.vhd
+ghdl -a simple_logic-tb.vhd
+ghdl -a simple_logic-tb_beh.vhd
+ghdl -e simple_logic_tb

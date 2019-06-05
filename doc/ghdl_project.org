@@ -1,0 +1,360 @@
+#+Author: Christoph Viehboeck
+#+TITLE: GHDL Tutorial
+#+EMAIL: s1810567023@students.fh-hagenberg.at
+
+#+OPTIONS: tex:t latex:t tex:verbatim
+#+OPTIONS: ':t -:t toc:nil ^:nil
+
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_HLEVEL: 1
+#+REVEAL_TRANS: fade
+#+REVEAL_THEME: simple
+
+* General
+This document contains the tutorial to the Project GHDL and Ikarus
+Verilog.
+
+** Structure
+Folder Structure of the Project.
+
+#+BEGIN_SRC shell :exports results
+tree -L 1 ..
+#+END_SRC
+
+#+RESULTS:
+| ..  |              |   |       |
+| ├── | doc          |   |       |
+| ├── | labs         |   |       |
+| ├── | packs        |   |       |
+| ├── | presentation |   |       |
+| └── | scripts      |   |       |
+| 5   | directories, | 0 | files |
+
+* Links
+Some useful links found during research and working on this topic.
+
+** ghdl
+- http://ghdl.free.fr/
+The official GHDL Page
+- https://github.com/ghdl/ghdl
+Github repository conatining the latest sources
+- https://ghdl.readthedocs.io/en/latest/
+Documentation to GHDL
+
+** verilog
+- http://iverilog.icarus.com/
+The official Ikarus Verilog Page
+- https://github.com/steveicarus/iverilog
+Git Page of the Ikarus Project
+
+** misc
+- https://github.com/drom/awesome-hdl
+Different Projects about GHDL
+
+* Install
+How to install the ghdl simulator on a unix like system. Due to no
+other OS is realy relevant :)
+
+** Package Manager
+On a debian like system ghdl can be installed from the command line
+with the following argument. Depending on which version you are
+Using. When on Ubuntu 18.04 there is no package in the
+repositories. It returns on the 19.04 version.
+
+#+BEGIN_SRC bash :exports code
+sudo apt install ghdl -y
+#+END_SRC
+
+The installatin of Ikarus Verilog is the same than the ghdl one use
+the following code for installation.
+
+#+BEGIN_SRC bash :exports code
+sudo apt install iverilog -y
+#+END_SRC
+
+** Scripts
+The folder scripts contains a few scripts which can be used for the
+installation of the toolchain. Some Version mismatches on the apt
+Packages making problems when trying to use the code coverage option
+in ghdl.
+
+** Windows
+For a windows like system use the official documentaion and the
+prebuilt binarys for the installation.
+
+** docker
+If you are experienced in docker, their exists a repo with ghdl and
+depdencies docker scripts and config. Have a look at it.
+https://github.com/ghdl/docker
+
+** Wave
+The Simulator is not able to interactive build a wave, means it is
+only a simulator. But the signals can be traced to a file. With a
+Waveformwviewer the trace can be debugged.
+
+*** Unix
+Simply use the package manager.
+
+#+BEGIN_SRC shell :exports code
+sudo apt install gtkwave
+#+END_SRC
+
+*** Windows/OSX
+On Windows use the prebuilt
+binaries. https://sourceforge.net/projects/gtkwave/files/
+
+* Usage
+For the correct Usage of the Simulators follow the
+instructions. Source code is located in the labs folder.
+
+#+BEGIN_SRC shell :exports results
+ls ../labs
+#+END_SRC
+
+#+RESULTS:
+| lab10_veri_gen_vhdl     |
+| lab11_veri_vpi          |
+| lab1_simple_ghdl        |
+| lab2_simple_makefile    |
+| lab3_big_unit           |
+| lab4_adder_codecoverage |
+| lab5_psl_example        |
+| lab6_vhpi_example       |
+| lab7_vhdl_access_c      |
+| lab8_vhdl_direct_c      |
+| lab9_veri_adder         |
+
+The labs folder contains in sum 11 labs for working with the open
+source vhdl and verilog simulators.
+
+** lab1_simple_ghdl
+This labs shows simple the commandline usage of the ghdl
+simulator. Do the analyze step on your own and check the results.
+
+*** Files
+
+#+BEGIN_SRC shell :exports results
+ls ../labs/lab1_simple_ghdl
+#+END_SRC
+
+#+RESULTS:
+| commands.txt            |
+| simple_logic-e.vhd      |
+| simple_logic-rtl-a.vhd  |
+| simple_logic-tb_beh.vhd |
+
+The file commands contains all commands which have to be typed into
+the console for the analyzing and the elaboration of the design. Ghdl
+creates a executeable after the elaboration.
+
+*** commands
+
+#+BEGIN_SRC shell :exports results
+cat ../labs/lab1_simple_ghdl/commands.txt
+#+END_SRC
+
+#+RESULTS:
+| ghdl | -a | simple_logic-e.vhd      |
+| ghdl | -a | simple_logic-rtl-a.vhd  |
+| ghdl | -a | simple_logic-tb.vhd     |
+| ghdl | -a | simple_logic-tb_beh.vhd |
+| ghdl | -e | simple_logic_tb         |
+
+*** execution
+When the commands are executed. Try asking the executable for options
+and running the simulation
+
+#+BEGIN_SRC shell :exports code
+./simple_logic_tb --help
+#+END_SRC
+
+Try creating a waveform with one of the following options:
+
+#+BEGIN_SRC shell :exports code
+./simple_logic_tb --wave=<file.ghw>
+# or vcd file
+./simple_logic_tb --vcd=<file.vcd>
+#+END_SRC
+
+To view the waveform use following command to show up the gtkwave.
+
+- run command
+- insert signals
+- show full frame
+
+#+BEGIN_SRC shell :exports code
+gtkwave <your-file.(vcd|ghw)>
+#+END_SRC
+
+** lab2_simple_makefile
+This labs contains a simple makefile, which can be used to simulate
+the design with a predefined structure.
+
+#+BEGIN_SRC shell :exports code
+make TESTBENCH=tb_and_2
+#+END_SRC
+
+The commnad does the elab and analyze step of the design. After it
+starts the simulation.
+
+** lab3_big_unit
+this unit contains a simple cpu from peter ashenden, which can be used
+freely also his book "The designer's guide to vhdl" uses the unit.\\
+
+ghdl can also be used for simple simulation of a big design you don't
+know. only feed the simulator all necessary vhdl files and ghdl does
+the dependency resolving of entities and architectures.
+
+#+BEGIN_SRC shell :exports code
+ghdl -i *.vhdl
+ghdl -m dlx_test_behaviour
+#+END_SRC
+
+Execute the simulation with the create executable. Be aware ghdl
+simulates till no action is pending. The example drives the clock from
+the cpu infinte. The simulation will never stop. 
+
+#+BEGIN_SRC shell :exports code
+./dlx_test_behaviour --stop-time=10us
+#+END_SRC
+
+For every design one time compiled into the work library it is
+possible to generate a Makefile from ghdl.
+
+#+BEGIN_SRC shell :exports code
+ghdl --gen-makefile dlx_test_behaviour
+#+END_SRC
+
+This command prints the Makefile to the commandline copy or use the ">"
+operator for writing to a file.
+
+** lab4_adder_codecoverage
+Be aware only the gcc backend compiled with the simulator ghdl is able
+to generate the code coverage report of vhdl files.
+
+#+BEGIN_SRC shell :exports both
+ghdl -v
+#+END_SRC
+
+#+RESULTS:
+| GHDL      | 0.37-dev | (v0.36-128-gd229e16e) | [Dunoon   | edition]        |         |          |     |         |            |          |       |    |    |
+| Compiled  | with     | GNAT                  | Version:  | 8.3.0           |         |          |     |         |            |          |       |    |    |
+| GCC       | back-end | code                  | generator |                 |         |          |     |         |            |          |       |    |    |
+| Written   | by       | Tristan               | Gingold.  |                 |         |          |     |         |            |          |       |    |    |
+| Copyright | (C)      | 2003                  | 0         | 2019            | Tristan | Gingold. |     |         |            |          |       |    |    |
+| GHDL      | is       | free                  | software, | covered         | by      | the      | GNU | General | Public     | License. | There | is | NO |
+| warranty; | not      | even                  | for       | MERCHANTABILITY | or      | FITNESS  | FOR | A       | PARTICULAR | PURPOSE. |       |    |    |
+
+Make sure your ghdl version is compiled with the gcc backend or use
+the script for compiling ghdl with gcc in the scripts folder.
+
+#+BEGIN_SRC shell :exports code
+../scripts/ghdl_gcc_backend.sh
+#+END_SRC
+
+The script installs ghdl with gcc-backend version 8.3.0 now make sure
+the gcov tool is installed with the same version and try executing the
+scripts in the lab folder.
+
+#+BEGIN_SRC shell :exports results
+ls ../labs/lab4_adder_codecoverage | grep -i ".sh"
+#+END_SRC
+
+#+RESULTS:
+| clean.sh  |
+| cover.sh  |
+
+After creation open the generated index.html file with your favourite
+browser. Navigate to the unit and check the code coverage.
+
+*** script
+The cover script does a little bit of magic with compile options and
+linking the design with the coverage lib. check the options if you are
+trying it on your own unit.
+
+** lab5_psl_example
+The lab5 contains a psl example which shows how to use the psl
+language with the simulator. i assume you know what psl is, else check
+the wiki link first
+https://en.wikipedia.org/wiki/Property_Specification_Language .
+
+*** run
+simply use the run script in the folder for creating the psl
+report. this is a simple json file. If you are changing the psl
+statments the simulator generates assertions if psl detects a false
+bhv.
+
+** lab6_vhpi_example
+vhpi is a interface to other languages from vhdl to for exmaple c or
+c++ in ghdl also ada is possible. the example contains a simple call
+from vhdl to a c function. Have a look at the file math-p.vhd which
+holds the necessary source code.
+
+*** vhdl to c
+
+#+BEGIN_SRC vhdl :exports code
+  package P is
+    function F return integer;
+    attribute FOREIGN of F : function is "implementation-dependent info";
+  end package P;
+#+END_SRC
+
+The definition should look like the above code for example. Run the
+exection of the call from vhdl with the run script. check the sinus
+waveform with your prefred waveform viewer.
+
+*** call sim
+With the c language it is possible to call the ghdl simulation when
+linked togehter. keyword is the extern statement in c to call the
+function.
+
+** lab7_vhdl_access_c
+This example shows how vhdl can access a c variable and change it.
+
+#+BEGIN_SRC vhdl :exports code
+type int_access is access integer;
+shared variable my_data : int_access := get_ptr;
+#+END_SRC
+
+The above description in vhdl represents a pointer to a type in
+c. The access.sh script will start the simulation and show the changes
+of the variables from both languages.
+
+** lab8_vhdl_direct_c
+This example shows how to change a variable located in the vhdl
+space with the c language. The example uses a function call from vhdl
+to c and changes the internal variable. The following code shows how
+to define the access on the variable.
+
+#+BEGIN_SRC c :exports code
+#define VARNAME (work__ghdl_direct__my_var)
+#+END_SRC
+
+The script direct.sh will start the compile and simulation of the
+example.
+
+** lab9_veri_adder
+The labs shows the usage of the ikarus verilog simulator. The concept
+is different than from vhdl. Ikarus compiles the sources and has a own
+enivronment for simlation and calling the executable. Use the iverilog
+tool for compile and analyze. vvp is used for the simulation.
+
+** lab10_veri_gen_hdl
+The lab shows how to use the ikarus verilog simulator for a conversion
+of a verilog unit to a vhdl one. The following code shows the
+necessary command for the conversion.
+
+#+BEGIN_SRC shell
+iverilog -t vhdl -o <vhdl-unit-name> verilog-unit
+#+END_SRC
+
+Use the convert.sh script for converting a simple adder from the
+former lab. After conversion you can try with the try_ghdl.sh script
+to analyze and run the design.
+
+** lab11_veri_vpi
+The example shows the usage of the ikarus verilog simlator with the
+vpi interface. I assume you know what and vpi interface is. It is
+similar to the vhdl vhpi interface and calls a c function out of the
+verilog simulation. Try it with the hello_from_c.sh script.
+

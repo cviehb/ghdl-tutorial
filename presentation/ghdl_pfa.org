@@ -1,0 +1,153 @@
+#+Author: Christoph Viehboeck
+#+TITLE: Open Source HDL
+#+EMAIL: s1810567023@students.fh-hagenberg.at
+
+#+OPTIONS: tex:t latex:t tex:verbatim
+#+OPTIONS: ':t -:t toc:nil
+
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_HLEVEL: 1
+#+REVEAL_TRANS: fade
+#+REVEAL_THEME: simple
+
+* Simulatoren
+
+- Verilog/Systemverilog
+  - Verilator (c++, systemc)
+  - Ikarus Verilog
+- VHDL
+  - GHDL
+  - nvc
+
+* Intro - GHDL
+
+- VHDL Simulator
+- Ada
+- Keine Interaktive Wave
+- Eventbasiert
+
+** ADA
+
+Erste standardisierte Hochsprache.
+
+- Sicherheitskritische Anwendungen
+- sehr VHDL ähnlich
+
+#+ATTR_HTML: :width 250px
+#+ATTR_LATEX: :width 250px
+[[./ada_logo.png]]
+
+** Entwickler
+
+ Tristan Gingold
+
+ - One-Man Show
+ - Ada-Core Team
+ - HW Engineer Cern
+
+** Third Party
+
+- Vunit
+- UVVM
+- OSVVM
+- cocotb
+
+* Usage GHDL
+
+- analyze
+- elab
+- run
+
+#+BEGIN_SRC shell
+ghdl -a simple_design.vhd
+ghdl -e my_ent
+ghdl -r my_ent
+#+END_SRC
+
+** Codegenerator
+
+#+ATTR_HTML: :width 700px
+#+ATTR_LATEX: :width 700px
+[[./backends.png]]
+
+** Makefile
+Generierung mittels GHDL.
+
+#+BEGIN_SRC shell
+ghdl --gen-makefile > Makefile
+#+END_SRC
+
+** Coverage
+
+- gcc backend
+- gcov | gcc tool
+- line cover
+
+#+ATTR_HTML: :width 450px
+#+ATTR_LATEX: :width 450px
+[[./coverage.png]]
+
+** PSL
+Property Specification Language
+
+- Generiert für jedes Statement einen Process
+- Teilweise implementiert
+
+#+BEGIN_SRC vhdl
+-- psl assert always (true[*]; req; ack)  |=> (start; busy[*]; end)
+#+END_SRC
+
+#+ATTR_HTML: :width 400px
+#+ATTR_LATEX: :width 400px
+[[./psl_example.png]]
+
+** VHPI
+
+- VHDL Procedural Interface
+- VHDL <--> c/c++ | Ada
+
+#+BEGIN_SRC vhdl
+  package P is
+    function F return integer;
+    attribute FOREIGN of F : function is "implementation-dependent info";
+  end package P;
+#+END_SRC
+
+* Icarus Verilog
+
+- VPI
+- Verilog to VHDL Converter
+- Systemverilog partly
+
+** Entwickler
+
+- San Francisco
+- FPGA, Systemc
+- Paid Support
+
+#+ATTR_HTML: :width 200px
+#+ATTR_LATEX: :width 200px
+[[./Stephen_Williams.png]]
+
+** VPI
+
+Verilog Procedural Interface
+
+#+BEGIN_SRC c
+  // Registers the increment system task
+  void register_increment() {
+    s_vpi_systf_data data = {vpiSysTask, 0, "$increment", increment, 0, 0, 0};
+    vpi_register_systf(&data);
+  }
+
+  // Contains a zero-terminated list of functions that have to be called at
+  // startup
+  void (*vlog_startup_routines[])() = {register_increment, 0};
+#+END_SRC
+
+* Homework
+
+1. Versuche dein Design (prol16) aus ASE5 mittels ghdl zu kompilieren, simulieren.
+2. Erstelle eine VHDL Unit --> Berechne mittels Cordic-Algo Sinus und
+   Cosinus --> Verifiziere mit der cmath-lib.
+

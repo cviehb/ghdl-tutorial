@@ -1,0 +1,35 @@
+#+Author: Christoph Viehboeck
+#+TITLE: Coverage
+#+EMAIL: s1810567023@students.fh-hagenberg.at
+
+* Coverage Report
+Coverage Report für Units aufgrund der nativen Kompilierung, wenn das
+GCC Backend verwendet wird.
+
+** Design File
+Analyse mit Coverage.
+
+#+BEGIN_SRC shell
+ghdl -a  -Wc,-fprofile-arcs -Wc,-ftest-coverage adder.vhd
+ghdl -a  tb_adder.vhd
+#+END_SRC
+
+#+RESULTS:
+
+** Testbench
+Elab und Run der Testbench mit gelinkter CodeCoverage.
+
+#+BEGIN_SRC shell
+ghdl -e -Wl,-lgcov adder_tb
+ghdl -r adder_tb
+#+END_SRC
+
+#+RESULTS:
+: tb_adder.vhd:53:5:@8ns:(assertion note): end of test
+
+** Report
+Generierung des Reports.
+
+#+BEGIN_SRC shell
+gcov -s $PWD adder.vhd
+#+END_SRC

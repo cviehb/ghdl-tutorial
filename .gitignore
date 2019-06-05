@@ -1,0 +1,13 @@
+*.*~
+
+# object and trace
+*.o
+*.vcd
+e~*
+
+labs/OSVVM
+labs/ase5
+labs/veri_cordic
+
+# ghdl
+work-obj93.cf
